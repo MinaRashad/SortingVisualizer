@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>Sorting Algorithm</title>
+	<script type="text/javascript" src="square.js"></script>
+	<style type="text/css">
+		div{
+			background-color: grey;
+			width:120px;
+			height: 140px;
+			position: absolute;
+			bottom:10px;
+			left:0px;
+			font-size: 30px;
+			font-style: bold; 
+		}
+		input{
+			width: 40px;
+		}
+		select{
+			width: 120px;
+		}
+	</style>
+</head>
+<body><center>
+<canvas id="myCanvas" width="500" height="500"></canvas>
+</center>
+<div>
+	<center>
+<button id="btn">Create bars!</button>
+<button id="cls" onclick="reset()">Clear</button>
+<button id="btn_sort" style="visibility: hidden;">Sort!</button>
+
+<select id="ways">
+	<option>Sorting Algorithms</option>
+	<option value="reg">regular</option>
+	<option value="insertion">insertion Algorithm</option>
+	<option value="selection">Selection Sort</option>
+	<option value="bubble">Bubble Sort</option>
+	<option value="heap">Heap Sort</option>
+	<!-- <option value="radix">Radix Sort  *</option>
+	<option value="merge">Merge Sort  *</option>
+ -->
+
+</select>
+<input type="number" placeholder="Pole width" id="inptpw" value="5" width="100">
+<!--
+inptpw : input pole width
+inptcd : input canvas dimensions
+-->
+<input type="number" placeholder="Canvas Width" id="inptcd" value="500" width="100">
+</center>
+</div>
+<script type="text/javascript">
+console.log("#######################\n########## M I N A  R A S H A D ######\n ####### MRFA ##########\n ##############################")
+//Variables
+	var index = 1, correctPlace, temp, k, min, minIndex, _N, left,right, leftArray, rightArray, _R,_L,rslt= []
+	var isSorted = false, root =0, indx = 0, max , exp
+	const DELAY = 10
+	////////
+	var intervalID
+	var canvas = document.getElementById('myCanvas')
+	var ctx = canvas.getContext('2d');
+	var square = new square(ctx, canvas)
+	const btn = document.getElementById('btn')
+	const btn_sort = document.getElementById("btn_sort")
+	const cls = document.getElementById("cls")
+  	const ways = document.getElementById("ways")//have the value of the sorting method
+
+  	const inputpw = document.getElementById("inputpw")//value of ple width
+  	const inptcd = document.getElementById('inptcd')//value of canvas width
+  	
+  	var _HEIGHTS = []
+	cls.style.visibility = "hidden"
+	var sorted = []
+	clearBg()
+
+	function clearBg() {
+		ctx.beginPath();
+		ctx.rect(0, 0, canvas.width, canvas.height);
+		ctx.fillStyle = "black";
+		ctx.fill();
+		ctx.closePath();
+
+	}
+
+function getMax(arr){
+	var mx = 0
+	for (var i = 0; i <= arr.length-1; i++) {
+		if (arr[i] > mx) {
+			mx = arr[i]
+		}
+	}
+	return mx;
+}
+
+/////////////sorting methods////////////////////////
+
+	function sort(arry) {//regular sort completed!
+		//get the array
+			var array = Array.from(arry)
+			//console.log(array)
+			var heights = []
+			var _HEIGHTS = []
+			//put it in heights
+			for (var i = 0; i < array.length-1; i++) {
+				heights.push(array[i].height)
+			}
+			//sort
+			_HEIGHTS = heights.sort(sortNumber)
+
+			pop =square.pop
+	
+			clearBg()	
+			//draw what you sorted
+			square.sorted(_HEIGHTS)
+	}
+	function insertion(arry) {//completed!
+			correctPlace=index
+			while(correctPlace > 0){
+				if (_HEIGHTS[correctPlace] < _HEIGHTS[correctPlace-1]) {
+					temp = _HEIGHTS[correctPlace]
+					_HEIGHTS[correctPlace] = _HEIGHTS[correctPlace-1]
+					_HEIGHTS[correctPlace-1] = temp
+					correctPlace = correctPlace - 1
+					//square.sorted(_HEIGHTS)
+					//wait(100)
+				} else{
+					index++;
+					break;
+				}
+			}
+	}
+	function radixSort(arry) {//incomplete
+		correctPlace = index - 1
+		while(correctPlace>= 0 && _HEIGHTS[index] < _HEIGHTS[correctPlace]){
+				correctPlace--
+		}
+		temp = _HEIGHTS[index]
+		k = index
+		while(k > correctPlace+1 ){
+			_HEIGHTS[k] = _HEIGHTS[k-1]
+			k--;
+		}
+		_HEIGHTS[k] = temp
+		index++;
+	}
+	function bubble(arry) {//completed!!
+
+		if (index >=0 ) {
+
+			for (correctPlace = 0; correctPlace < _HEIGHTS.length;correctPlace++) {
+				
+				if (_HEIGHTS[correctPlace-1] > _HEIGHTS[correctPlace]) {
+					temp = _HEIGHTS[ correctPlace ]
+					_HEIGHTS[ correctPlace ] = _HEIGHTS[correctPlace- 1]
+					_HEIGHTS[correctPlace -1] = temp;
+
+
+				}
+				
+			}
+			 index--
+		}
+		correctPlace = index
+	}
+	function selection() {//completed
+		correctPlace = index
+		min = _HEIGHTS[correctPlace]
+		minIndex = correctPlace
+		temp = _HEIGHTS[correctPlace]
+
+		if (min > _HEIGHTS[correctPlace+1]) {
+			min = _HEIGHTS[correctPlace+1]
+			minIndex = correctPlace+1
+		}
+		for (correctPlace; correctPlace < _HEIGHTS.length; correctPlace++) {
+			if (min > _HEIGHTS[correctPlace+1]) {
+				min = _HEIGHTS[correctPlace+1]
+				minIndex = correctPlace+1
+			}		
+		}
+		correctPlace= minIndex
+		_HEIGHTS[index] = min
+		_HEIGHTS[minIndex] = temp
+		index++;
+	}
+
+
+	function merge(left,right) {
+		var leftIndex = 0;
+		var rightIndex = 0;
+		var resultIndex = 0;
+
+		while (resultIndex < _HEIGHTS.length) {
+			if (leftIndex >= left.length) {
+				_HEIGHTS[resultIndex] = right[rightIndex]
+				rightIndex++;
+				resultIndex++
+			}
+			if (rightIndex >= right.length) {
+				_HEIGHTS[resultIndex] = left[leftIndex]
+				leftIndex++
+				resultIndex++
+			}
+			if (left[leftIndex] < right[resultIndex]) {
+				_HEIGHTS[resultIndex] = left[leftIndex]
+				leftIndex++
+				resultIndex;;
+			} else{
+				_HEIGHTS[resultIndex] = right[rightIndex]
+				rightIndex++
+				resultIndex++
+			}
+		}
+		return _HEIGHTS;
+	}
+	function mergeSort(arry){//inprocess
+		_N = _HEIGHTS.length
+		if (!(_N <= 1)) {
+			var middle = _N/2
+			var leftLength = middle
+			var rightLegth = _N - leftLength
+			var leftArray = []
+			var rightArray = []
+			index = 0
+
+			while(index < middle){
+				leftArray[index] = _HEIGHTS[index]
+				index++
+			}
+			var rightIndex = 0
+			index = middle
+
+			while(index <_N){
+				rightArray[rightIndex] = _HEIGHTS[index]
+				rightIndex++
+				index++
+			}
+			
+			_L = Array.from(leftArray)
+			_R = Array.from(rightArray)
+			//square.insertion(_L.concat(_R) , correctPlace)
+			return merge(mergeSort(leftArray),mergeSort(rightArray))
+
+
+			
+		}
+	}
+
+
+var Mrgsrt = (function() {
+
+  /**
+   * Sorts the array by breaking it down
+   * into smaller chunks.
+   *
+   * @param {Array} array The array to sort
+   */
+  function sort(array) {
+
+    var length = array.length,
+        mid    = Math.floor(length * 0.5),
+        left   = array.slice(0, mid),
+        right  = array.slice(mid, length);
+
+    if(length === 1) {
+      return array;
+    }
+
+    return conquer(sort(left), sort(right));
+
+  }
+
+  /**
+   * Merges two sublists back together.
+   * Shift either left or right onto
+   * the result depending on which is
+   * lower (assuming both exist), and simply
+   * pushes on a list if the other doesn't
+   * exist.
+   *
+   * @param {Array} left The left hand sublist
+   * @param {Array} right The right hand sublist
+   */
+  var conquer = function(left, right) {
+	var sorted = [];
+	var i = 0; //left tracker
+	var j = 0; //right tracker
+
+	while (i < left.length || j < right.length) {
+		_HEIGHTS = sorted
+	index = i
+	correctPlace =j
+
+	  if (i < left.length && j < right.length){
+	    if (left[i] < right[j]){
+	      sorted.push(left[i]);
+	      i++;
+	    }else{
+	      sorted.push(right[j]);
+	      j++
+	    }
+	  }else if (i < left.length){
+	    sorted.push(left[i]);
+	    i++;
+	  }else{
+	    sorted.push(right[j]);
+	    j++;
+	  }
+	}
+	console.log(sorted)
+	_HEIGHTS = sorted
+	return sorted;
+}
+  return {
+    sort: sort
+  };
+
+}
+)
+();
+
+
+
+function heapify(){
+		maxIndex = index;
+		if(index % 2 ==0){
+			index--;
+			if(_HEIGHTS[index] > _HEIGHTS[maxIndex]){
+				maxIndex = index;
+			}
+		}
+		parentIndex = (index - 1)/2;
+		if(_HEIGHTS[maxIndex] > _HEIGHTS[parentIndex]){
+			temp = _HEIGHTS[parentIndex]
+			_HEIGHTS[parentIndex] = _HEIGHTS[maxIndex]
+			_HEIGHTS[maxIndex] = temp
+			shiftDown(_HEIGHTS,maxIndex,_HEIGHTS.length-1)
+		}
+		index--
+	
+}
+
+function shiftDown(array , parentIndex, arrayEnd){
+	while(parentIndex < arrayEnd){
+		var leftChild = (parentIndex*2)+1;
+		var rightChild = (parentIndex*2)+2;
+		var maxIndex = parentIndex;
+		if(leftChild>arrayEnd){
+			break;
+		}
+		if(rightChild <= arrayEnd){
+			maxIndex = rightChild;
+		}
+		if (_HEIGHTS[leftChild] > _HEIGHTS[maxIndex]) {
+			maxIndex = leftChild;
+		}
+		if (_HEIGHTS[maxIndex] > _HEIGHTS[parentIndex]) {
+			temp = _HEIGHTS[parentIndex];
+			_HEIGHTS[parentIndex] = _HEIGHTS[maxIndex];
+			_HEIGHTS[maxIndex] = temp;
+			parentIndex = maxIndex
+		} else {
+			break;
+		}
+	}
+}
+
+function heap(){
+		temp = _HEIGHTS[indx]
+		_HEIGHTS[indx] = _HEIGHTS[root];
+		_HEIGHTS[root] = temp;
+		len--;
+		shiftDown(_HEIGHTS,root,len-1)
+		indx--
+}
+
+
+function countDigitsOf(num){
+	return str(num).length;
+}
+
+function radix (){
+	for (var i = 0; i < countDigitsOf(max); i++) {
+			console.log('i= '+i)
+		//for (var j = 0; j < _HEIGHTS.length; j++) {
+		//}
+	}
+}
+
+
+
+
+//////////////
+	function create() {
+		canvas.width=canvas.height=parseInt(inptcd.value)
+		square.wide = parseInt(inptpw.value)
+		inptpw.style.visibility = inptcd.style.visibility = "hidden"
+		//this.pos.y = 500-this.high
+		clearBg()
+		btn.style.visibility = "hidden"
+
+		btn_sort.style.visibility = "visible"
+		//draw random poles until the screen is full of poles
+		for (var i = 0; i <= canvas.width/square.wide; i++) {
+					square.draw()			
+		}
+		//Put heights in an array
+		for (var i = 0; i < square.pop.length-1; i++) {
+				 	_HEIGHTS.push(square.pop[i].height)
+				}
+
+	}
+btn.addEventListener("click", create)
+
+btn_sort.addEventListener("click", function () {
+	
+	if (ways.value == "reg") {
+		btn_sort.style.visibility = "hidden"
+
+		cls.style.visibility = "visible"
+
+		sort(square.pop)
+	} else if (ways.value =="insertion") {
+		btn_sort.style.visibility = "hidden"
+
+		cls.style.visibility = "visible"
+		//put heights in _HEIGHTS
+		for (var i = 0; i < square.pop.length-1; i++) {
+			_HEIGHTS.push(square.pop[i].height)
+		}
+		intervalID = setInterval(function(){
+			square.insertion(_HEIGHTS , correctPlace)
+			
+			if(index < square.pop.length ){
+				wait(DELAY)
+			  //wait(1000)
+				insertion(square.pop);
+			//wait(100)
+
+				}
+		},5)
+	} else if(ways.value == "selection"){	
+		btn_sort.style.visibility = "hidden"
+		cls.style.visibility = "visible"
+		_HEIGHTS = []
+		index = 0
+		//#####################################################
+		for (var i = 0; i < square.pop.length-1; i++) {
+			_HEIGHTS.push(square.pop[i].height)
+		}
+		//##############
+		intervalID = setInterval(function(){
+			square.insertion(_HEIGHTS , correctPlace)
+			if(index < square.pop.length - 1){
+				wait(DELAY)
+				selection()
+				}
+		},5)
+	}else if (ways.value == "bubble") {
+		btn_sort.style.visibility = "hidden"
+		cls.style.visibility = "visible"
+		_HEIGHTS = []
+		for (var i = 0; i < square.pop.length-1; i++) {
+			_HEIGHTS.push(square.pop[i].height)
+		}
+		//wait(1000)
+		correctPlace = 0
+		index = _HEIGHTS.length
+		intervalID = setInterval(function(){
+	
+		if(index >= 0){
+			//console.log(_HEIGHTS)
+			wait(DELAY)
+			square.insertion(_HEIGHTS, bubble(square.pop))
+
+			}
+		},5)
+	//	square.insertion(_HEIGHTS.reverse(), correctPlace)
+	}else if(ways.value =="heap"){
+		btn_sort.style.visibility = "hidden"
+		cls.style.visibility = "visible"
+		_HEIGHTS = []
+		root = 0;
+		for (var i = 0; i < square.pop.length-1; i++) {
+			_HEIGHTS.push(square.pop[i].height)
+		}
+		//wait(1000)
+		correctPlace = 0
+		index = _HEIGHTS.length
+		len = _HEIGHTS.length;
+		indx = len - 1
+
+
+
+		intervalID = setInterval(function(){
+			
+			if (index > root) {
+				square.insertion(_HEIGHTS,index)
+				heapify();
+
+			}else if (indx+1 > root) {
+				square.insertion(_HEIGHTS,indx)
+				heap()	
+			}
+			wait(DELAY)
+		},5)
+	
+	}else if (ways.value == "radix"){
+		btn_sort.style.visibility = "hidden"
+		cls.style.visibility = "visible"
+		_HEIGHTS = []
+		for (var i = 0; i < square.pop.length-1; i++) {
+			_HEIGHTS.push(square.pop[i].height)
+		}
+		//wait(1000)
+		correctPlace = 0
+		index = _HEIGHTS.length
+		len = _HEIGHTS.length;
+		max = getMax(_HEIGHTS)
+
+
+		intervalID = setInterval(function(){
+			square.insertion(_HEIGHTS,correctPlace);
+				radix()
+		},5)
+	
+	}else if (ways.value == "merge"){
+		btn_sort.style.visibility = "hidden"
+		cls.style.visibility = "visible"
+		_HEIGHTS = []
+		index = 0;
+		correctPlace = 0;
+		results = []
+		//#####################################################
+		for (var i = 0; i < square.pop.length-1; i++) {
+			_HEIGHTS.push(square.pop[i].height)
+		}
+		
+		leftArray = []
+		rightArray = [] 
+		//##############
+		
+		intervalID = setInterval(function(){
+			square.insertion(_HEIGHTS, correctPlace);
+				wait(DELAY);
+				mergeSort(_HEIGHTS);
+								
+				
+		},5)
+	} else{
+		alert("SELECT SOME ALGORITHM");
+	}
+
+}
+	
+)
+
+
+function reset() {
+
+	clearInterval(intervalID);
+	isSorted=false
+	_HEIGHTS = []
+	index = 1
+	indx = 0
+	root = 0
+	max = 0
+	square.high = Math.ceil(Math.random()*400)
+	square.wide =parseInt(inptpw.value)
+	square.pos = {
+		x: 0,
+		y:canvas.height -square.high
+	}
+	square.pop = []
+	clearBg()
+
+	btn.style.visibility = "visible"
+
+	cls.style.visibility = "hidden"
+	inptpw.style.visibility = "visible"
+	inptcd.style.visibility = "visible"
+
+}
+
+function sortNumber(a,b) {
+
+	return a-b
+}
+
+function wait(ms){ 
+ var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > ms){
+      break;
+    }
+  }
+}
+function swap(values,a,b){
+	var temp = values[a];
+	values[a] = values[b];
+	values[b] = temp;
+
+	return values;
+}
+function str(value){
+	if (typeof(value) == "string") {
+		return value;
+	}else{
+		return ''+value
+	}
+}
+function extract(num,index){
+	var reval = str(num)
+	for (var i =0; i <= countDigitsOf(num)-1; i++) {
+		if (i != index) {
+			reval= reval.replaceAt(i,'0');
+		}else{
+			//console.log("found number : "+ reval[i])
+		}
+		//console.log(reval)
+	}
+	return parseInt(reval);
+}
+
+String.prototype.replaceAt = function(index,replacement) {
+	return this.substr(0,index) +replacement + this.substr(index+replacement.length)
+};
+</script>
+</body>
+</html>
